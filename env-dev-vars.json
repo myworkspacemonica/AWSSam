@@ -1,0 +1,6 @@
+awssecuritygroupid=sg-02cc00371c4f27914
+awssubnetid1=subnet-0afdd5e826755da24
+awssubnetid2=subnet-0496fe32d32de2239
+existingS3BucketName=awssammonica
+env=dev
+lambdaRole=arn:aws:iam::897729112895:role/samlambdarole
