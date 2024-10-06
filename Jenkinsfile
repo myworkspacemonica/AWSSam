@@ -39,7 +39,7 @@ pipeline {
         ]) {
           unstash 'venv'
           unstash 'aws-sam'
-          sh 'venv/bin/sam deploy --stack-name $DEV_STACK_NAME -t ./template.yaml --s3-bucket $DEV_S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --parameter-overrides $(cat ${DEV_ENV})'
+          sh 'venv/bin/sam deploy --stack-name $DEV_STACK_NAME -t ./template.yml --s3-bucket $DEV_S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --parameter-overrides $(cat ${DEV_ENV})'
           
           }
         }
