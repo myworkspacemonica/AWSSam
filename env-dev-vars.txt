@@ -3,4 +3,4 @@ awssubnetid2=subnet-0496fe32d32de2239
 existingS3BucketName=awssammonica
 env=dev
 lambdaRole=arn:aws:iam::897729112895:role/samlambdarole
-slfsecuritygroupid=sg-02cc00371c4f27914
+awssecuritygroupid=sg-02cc00371c4f27914

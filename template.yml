@@ -1,25 +1,40 @@
+AWSTemplateformateVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-
-Globals:
-  set of globals
-
-Description:
-  String
-
-Metadata:
-  template metadata
+Description: SAM Template for Deploying Resources for AWS
 
 Parameters:
-  set of parameters
-
-Mappings:
-  set of mappings
-
-Conditions:
-  set of conditions
-
+  awssecuritygroupid:
+    Type: String
+    Description: Required for AWS functions creation
+  awssubnetid1:
+    Type: String
+    Description: Required for AWS functions creation
+  awssubnetid2:
+    Type: String
+    Description: Required for AWS functions creation
+  lambdaRole:
+    Type: String
+    Description: Required for Lambda functions creation
+  AwsRegion:
+    Type: String
+    Description: Required for Lambda functions creation
+     
 Resources:
-  set of resources
-
-Outputs:
-  set of outputs
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: aws_lambda.py
+      CodeUri: app/ws_lambda.py
+      Description: "Lambda example"
+      Environment:
+        Variables:
+          AwsRegion: !Ref AwsRegion
+      Role: !Ref lambdaRole
+      Handler: index.lambda_handler
+      Runtime: python3.9
+      Timeout: 900
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref awssecuritygroupid
+        SubnetIds:
+          - !Ref awssubnetid1
+          - !Ref awssubnetid2
