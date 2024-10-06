@@ -23,10 +23,10 @@ pipeline {
         stash includes: '**/.aws-sam/**/*', name: 'aws-sam'
       }
     }
-    stage('Deploy to develop') {
+    stage('Deploy to main') {
       
       when {
-        expression {BRANCH_NAME_WITHOUT_TYPE == 'develop'}
+        expression {BRANCH_NAME_WITHOUT_TYPE == 'main'}
       }
       steps {
         withCredentials([
