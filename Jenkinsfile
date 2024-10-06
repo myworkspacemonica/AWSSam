@@ -1,49 +1,49 @@
 pipeline {
   agent any
- 
+      environment {
+        BRANCH_NAME_WITHOUT_TYPE = "${GIT_BRANCH.split('/').size() > 1? GIT_BRANCH.split('/')[1..-1].join('/'): GIT_BRANCH}" 
+        AWS REGION = 'ca-central-1'
+        DEV_STACK_NAME = 'aws-sam-dev-deploy'
+        DEV_S3_BUCKET = 'awssammonica'
+        DEV_ENV= "env-dev-vars.txt"
+      }
+
   stages {
-    stage('Install sam-cli') {
+    stage('Install Pipeline Dependencies') {
       steps {
-        sh 'python3 -m venv venv && venv/bin/pip install aws-sam-cli'
+        sh 'python3 -m venv venv && venv/bin/pip install aws-sam-cli && venv/bin/pip install pytest'
         stash includes: '**/venv/**/*', name: 'venv'
       }
     }
     stage('Build') {
       steps {
         unstash 'venv'
+        sh 'venv/bin/pytest -v'
         sh 'venv/bin/sam build'
         stash includes: '**/.aws-sam/**/*', name: 'aws-sam'
       }
     }
-    stage('beta') {
-      environment {
-        STACK_NAME = 'sam-app-beta-stage'
-        S3_BUCKET = 'sam-jenkins-demo-us-west-2-user1'
+    stage('Deploy to develop') {
+      
+      when {
+        expression {BRANCH_NAME_WITHOUT_TYPE == 'develop'}
       }
       steps {
-        withAWS(credentials: 'sam-jenkins-demo-credentials', region: 'us-west-2') {
+        withCredentials([
+          [
+            $class: 'AwsSamJenkinsCredentials',
+            credentialsId: "aws_sam_jenkins_deploy_dev",
+            accessKeyVariable: 'AWS_SAM_ACCESS_KEY_ID',
+            secretKeyVariable: 'AWS_SAM_SECRETE_KEY_ID'
+          ]
+        ]) {
           unstash 'venv'
           unstash 'aws-sam'
-          sh 'venv/bin/sam deploy --stack-name $STACK_NAME -t template.yaml --s3-bucket $S3_BUCKET --capabilities CAPABILITY_IAM'
-          dir ('hello-world') {
-            sh 'npm ci'
-            sh 'npm run integ-test'
+          sh 'venv/bin/sam deploy --stack-name $DEV_STACK_NAME -t ./template.yaml --s3-bucket $DEV_S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --parameter-overrides $(cat ${DEV_ENV})'
+          
           }
         }
       }
-    }
-    stage('prod') {
-      environment {
-        STACK_NAME = 'sam-app-prod-stage'
-        S3_BUCKET = 'sam-jenkins-demo-us-east-1-user1'
-      }
-      steps {
-        withAWS(credentials: 'sam-jenkins-demo-credentials', region: 'us-east-1') {
-          unstash 'venv'
-          unstash 'aws-sam'
-          sh 'venv/bin/sam deploy --stack-name $STACK_NAME -t template.yaml --s3-bucket $S3_BUCKET --capabilities CAPABILITY_IAM'
-        }
-      }
-    }
-  }
-}
+  } 
+}       
+   
