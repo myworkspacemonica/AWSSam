@@ -2,7 +2,7 @@ pipeline {
   agent any
       environment {
         BRANCH_NAME_WITHOUT_TYPE = "${GIT_BRANCH.split('/').size() > 1? GIT_BRANCH.split('/')[1..-1].join('/'): GIT_BRANCH}" 
-        AWS REGION = 'ca-central-1'
+        AWS_REGION = 'ca-central-1'
         DEV_STACK_NAME = 'aws-sam-dev-deploy'
         DEV_S3_BUCKET = 'awssammonica'
         DEV_ENV= "env-dev-vars.txt"
