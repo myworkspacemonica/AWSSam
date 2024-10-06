@@ -23,7 +23,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: aws_lambda.py
-      CodeUri: app/ws_lambda.py
+      CodeUri: app/aws_lambda.py
       Description: "Lambda example"
       Environment:
         Variables:
