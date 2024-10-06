@@ -15,7 +15,7 @@ Parameters:
   lambdaRole:
     Type: String
     Description: Required for Lambda functions creation
-  AwsRegion:
+  awsRegion:
     Type: String
     Description: Required for Lambda functions creation
      
@@ -27,7 +27,7 @@ Resources:
       Description: "Lambda example"
       Environment:
         Variables:
-          AwsRegion: !Ref AwsRegion
+          awsRegion: !Ref awsRegion
       Role: !Ref lambdaRole
       Handler: index.lambda_handler
       Runtime: python3.9
